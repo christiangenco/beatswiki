@@ -10,7 +10,7 @@ export default function TimePage({}) {
 
   const title = `${time} in Swatch® .beats`;
 
-  const beats = parseFloat(time.replace(/[^0-9.]/, ""));
+  const beats = time ? parseFloat(time.replace(/[^0-9.]/, "")) : null;
 
   return (
     <div>
