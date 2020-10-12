@@ -2,16 +2,17 @@ import "../styles.css";
 
 // import App from 'next/app'
 
-import { FirebaseProvider } from "../hooks/useFirebase";
+// import { FirebaseProvider } from "../hooks/useFirebase";
 
-import firebaseConfig from "../config/firebase";
+// import firebaseConfig from "../config/firebase";
 
 function MyApp({ Component, pageProps }) {
-  return (
-    <FirebaseProvider config={firebaseConfig}>
-      <Component {...pageProps} />
-    </FirebaseProvider>
-  );
+  return <Component {...pageProps} />;
+  // return (
+  //   <FirebaseProvider config={firebaseConfig}>
+  //     <Component {...pageProps} />
+  //   </FirebaseProvider>
+  // );
 }
 
 // Only uncomment this method if you have blocking data requirements for

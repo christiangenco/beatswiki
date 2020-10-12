@@ -7,9 +7,35 @@ import {
   getMilliseconds,
   differenceInSeconds,
   formatISO,
+  parseISO,
+  addSeconds,
+  startOfDay,
 } from "date-fns";
 
-export function beatsToDate(beats) {}
+export function localTimezone() {
+  return new Date().toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1];
+}
+
+function localTimezoneOffset() {
+  return new Date().toString().match(/([\+-][0-9]+)/)[1];
+}
+
+export function beatsToDate(beats) {
+  let totalSeconds = beats * 86.4;
+  // const timeZone = "+01:00";
+  // totalSeconds += 60 * 60; // +01:00 time zone
+
+  const now = new Date();
+  const midnight = startOfDay(now);
+
+  const date = addSeconds(midnight, totalSeconds);
+  const bmtDate = zonedTimeToUtc(date, "+01:00");
+
+  const localTimezone = localTimezoneOffset();
+  const localDate = utcToZonedTime(bmtDate, localTimezone);
+
+  return localDate;
+}
 
 export function dateToBeats(date) {
   // const midnight = toDate("2020-10-11T0:00:00+01:00");
