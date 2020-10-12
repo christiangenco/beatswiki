@@ -1,0 +1,9 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+@tailwind utilities;
+
+.aspect-16x9 {
+  padding-bottom: 56.25%; /* (9 / 16 = 0.5625) */
+}
