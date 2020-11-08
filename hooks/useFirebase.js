@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/storage";
 import {
   useCollectionData,
   useDocumentData,
@@ -29,31 +30,33 @@ function storeUser({ user, db }) {
       creationTime: new Date(creationTime),
       lastSignInTime: new Date(lastSignInTime),
     };
-    userDoc.set(userData);
+    userDoc.set(userData, { merge: true });
     return { userDoc, userData };
   }
   return {};
 }
 
-function FirebaseProvider({ children, config }) {
+function FirebaseProvider({ children, config, enablePersistence }) {
   const [user, setUser] = useState(null);
 
   if (!firebase.apps.length) {
     firebase.initializeApp(config);
-    firebase
-      .firestore()
-      .enablePersistence()
-      .catch(err => {
-        if (err.code == "failed-precondition") {
-          alert(
-            "Oh yikes—looks like multiple tabs are open. Offline support may be weird."
-          );
-        } else if (err.code == "unimplemented") {
-          // The current browser does not support all of the
-          // features required to enable persistence
-          // ...
-        }
-      });
+    if (enablePersistence) {
+      firebase
+        .firestore()
+        .enablePersistence()
+        .catch(err => {
+          if (err.code == "failed-precondition") {
+            alert(
+              "Oh yikes—looks like multiple tabs are open. Offline support may be weird."
+            );
+          } else if (err.code == "unimplemented") {
+            // The current browser does not support all of the
+            // features required to enable persistence
+            // ...
+          }
+        });
+    }
   }
   // const firebaseApp = !firebase.apps.length
   //   ?
@@ -96,13 +99,58 @@ function useFirebase() {
   return context;
 }
 
-function signinWithGoogle() {
+function useStorage() {
+  const firebase = useFirebase();
+  const [progress, setProgress] = useState(null);
+  const [error, setError] = useState(null);
+
+  function upload({ data, path, metadata = {}, onProgress }) {
+    const ref = firebase.storage().ref().child(path);
+    const uploadTask = ref.put(data, metadata);
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        snapshot => {
+          if (typeof onProgress === "function") {
+            const total = snapshot.totalBytes;
+            const transferred = snapshot.bytesTransferred;
+            const percent = (transferred / total) * 100;
+            onProgress({ total, transferred, percent });
+          }
+          // switch (snapshot.state) {
+          //   case firebase.storage.TaskState.PAUSED:
+          //     console.log("Upload is paused");
+          //     break;
+          //   case firebase.storage.TaskState.RUNNING:
+          //     console.log("Upload is running");
+          //     break;
+          // }
+        },
+        function (error) {
+          reject(error);
+        },
+        function () {
+          uploadTask.snapshot.ref.getDownloadURL().then(url => {
+            resolve({ url, ref: uploadTask.snapshot.ref });
+            //   console.log("File available at", downloadURL);
+          });
+        }
+      );
+    });
+  }
+
+  return { upload, progress, error };
+}
+
+function signinWithGoogle({ scopes }) {
   const provider = new firebase.auth.GoogleAuthProvider();
   // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-  provider.addScope("https://www.googleapis.com/auth/youtube.upload");
+  // provider.addScope("https://www.googleapis.com/auth/youtube.upload");
   // provider.setCustomParameters({
   //   'login_hint': 'user@example.com'
-  // });
+  // });x
+  if (scopes) scopes.forEach(scope => provider.addScope(scope));
+
   return firebase.auth().signInWithPopup(provider);
 }
 
@@ -130,16 +178,27 @@ const debouncedUpdate = debounce(({ doc, data }) => {
   doc.update(data);
 }, 1000);
 
-function useCollection(collectionPath) {
+function useCollection(collectionPath, options = {}) {
   let path = collectionPath;
   const db = useFirestore();
+  window.db = db;
   const firebase = useFirebase();
   const { user } = useAuth();
   if (user && path[0] !== "/") path = `/users/${user.uid}/${path}`;
 
   const collection = db.collection(path);
+  let collectionQuery = collection;
+  if (options.orderBy)
+    collectionQuery = collectionQuery.orderBy(
+      options.orderBy,
+      options.desc ? "desc" : "asc"
+    );
 
-  const [firebaseData, loading, error] = useCollectionData(collection, {
+  if (options.limit) {
+    collectionQuery = collectionQuery.limit(options.limit);
+  }
+
+  const [firebaseData, loading, error] = useCollectionData(collectionQuery, {
     idField: "id",
   });
 
@@ -190,7 +249,7 @@ function useDoc(docPath) {
   }, [firebaseData]);
 
   function setDataWithFirebase(newData) {
-    setData(newData);
+    setData({ ...data, ...newData });
     debouncedUpdate({
       doc,
       data: {
@@ -208,9 +267,14 @@ function useDoc(docPath) {
     doc.update(newData);
   }
 
+  function upsert(newData) {
+    doc.set(newData, { merge: true });
+  }
+
   return {
     data,
     update,
+    upsert,
     debouncedUpdate: setDataWithFirebase,
     remove,
     loading,
@@ -225,4 +289,5 @@ export {
   useAuth,
   useCollection,
   useDoc,
+  useStorage,
 };

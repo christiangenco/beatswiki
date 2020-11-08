@@ -1,5 +1,6 @@
+import React from "react";
 import { useState, useEffect } from "react";
-import Textarea from "react-autosize-textarea";
+import Textarea from "react-textarea-autosize";
 
 // TODO: call onChange after no changes in X seconds
 
@@ -8,6 +9,9 @@ export default function ({
   onChange,
   className = "",
   placeholder,
+  onFocus,
+  onBlur,
+  singleLine = false,
 }) {
   const [value, setValue] = useState(defaultValue);
   const [editing, setEditing] = useState(false);
@@ -16,24 +20,29 @@ export default function ({
     if (!editing) setValue(defaultValue);
   }, [defaultValue]);
 
-  return (
-    <Textarea
-      className={className}
-      value={value || ""}
-      onChange={e => setValue(e.target.value)}
-      onKeyDown={e => {
-        if ((e.key === "Enter" && !e.shiftKey) || e.key === "Escape") {
-          e.preventDefault();
-          e.stopPropagation();
-          e.target.blur();
-        }
-      }}
-      placeholder={placeholder}
-      onFocus={e => setEditing(true)}
-      onBlur={e => {
-        onChange(value);
-        setEditing(false);
-      }}
-    />
-  );
+  const props = {
+    className: className,
+    value: value || "",
+    onChange: (e) => setValue(e.target.value),
+    onKeyDown: (e) => {
+      if ((e.key === "Enter" && !e.shiftKey) || e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        e.target.blur();
+      }
+    },
+    placeholder: placeholder,
+    onFocus: (e) => {
+      setEditing(true);
+      onFocus && onFocus();
+    },
+    onBlur: (e) => {
+      onChange(value);
+      setEditing(false);
+      onBlur && onBlur();
+    },
+  };
+
+  if (singleLine) return <input type="text" {...props} />;
+  else return <Textarea {...props} />;
 }
