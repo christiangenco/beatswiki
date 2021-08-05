@@ -64,9 +64,18 @@ export default function Home() {
           <Highlight>daylight savings time shifts</Highlight> to worry about.
         </P>
         <P>
-          Instead dividing a day into 24 hours and 60 minutes per hour and 60
-          seconds per minute, the Internet Time system divides the day into 1000
-          ".beats". Each .beat is 1 minute and 26.4 seconds.
+          There are exactly 1,000{" "}
+          <span className="bg-red-500 rounded text-white p-1">.Beats</span> in a
+          day, making each{" "}
+          <span className="bg-red-500 rounded text-white p-1">.Beat</span>{" "}
+          precisely 1 minute and 26.4 seconds long.
+        </P>
+        <P>
+          If you'd like to know how many{" "}
+          <span className="bg-red-500 rounded text-white p-1">.Beats</span> are
+          in a year, just multiply 365 days by 1,000 beats/day to get 365,000{" "}
+          <span className="bg-red-500 rounded text-white p-1">.Beats</span>.
+          Good luck figuring out how many seconds are in a year in your head.
         </P>
         <P>
           If you'd like to meet somebody at{" "}
