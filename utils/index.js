@@ -55,7 +55,8 @@ export function dateToBeats(date) {
     miliseconds / 1000 + seconds + minutes * 60 + hours * 3600;
   const beats = (totalSeconds / 86.4).toFixed(2);
 
-  return { beats, isoDate: formatISO(bmtDate, { representation: "date" }) };
+  const isoDate = formatISO(bmtDate, { representation: "date" });
+  return { beats, isoDate, fullBeats: `${isoDate}@${beats}` };
 }
 
 // https://github.com/InteractionDesignFoundation/add-event-to-calendar-docs/blob/main/services/google.md

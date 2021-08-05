@@ -14,6 +14,7 @@ const secondsPerBeat = 86.4;
 export default function Home() {
   const defaultTitle = ".Beat Swatch® Internet Time Wiki";
   const [title, setTitle] = useState(defaultTitle);
+  const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
 
   const [now, setNow] = useState(new Date());
 
@@ -57,7 +58,7 @@ export default function Home() {
         <P>
           Unlike your local time, its{" "}
           <span className="font-mono">
-            {isoDate} @{beats}
+            {isoDate}@{beats}
           </span>{" "}
           all over the world right now. There are no confusing{" "}
           <Highlight>time zones</Highlight> or
@@ -92,6 +93,23 @@ export default function Home() {
           so they can see when <span className="font-mono">@{beats}</span> is in
           their local time.
         </P>
+        <P>
+          You can also link them to a precise day <i>and</i> time, like for a
+          meeting:
+        </P>
+        <div className="flex justify-around rounded shadow px-4 py-4">
+          <input
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            type="datetime-local"
+          />
+          <a
+            className="text-blue-500 underline"
+            href={`https://beats.wiki/${dateToBeats(date).fullBeats}`}
+          >
+            beats.wiki/{dateToBeats(date).fullBeats}
+          </a>
+        </div>
         <hr className="my-4" />
         <P>
           If you'd like to know more about{" "}
