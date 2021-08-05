@@ -75,7 +75,8 @@ export default function Home() {
           <span className="bg-red-500 rounded text-white p-1">.Beats</span> are
           in a year, just multiply 365 days by 1,000 beats/day to get 365,000{" "}
           <span className="bg-red-500 rounded text-white p-1">.Beats</span>.
-          Good luck figuring out how many seconds are in a year in your head.
+          Good luck figuring out how many <i>seconds</i> are in a year in your
+          head.
         </P>
         <P>
           If you'd like to meet somebody at{" "}
@@ -93,7 +94,9 @@ export default function Home() {
         </P>
         <hr className="my-4" />
         <P>
-          If you'd like to know more about , check out{" "}
+          If you'd like to know more about{" "}
+          <span className="bg-red-500 rounded text-white p-1">.Beats</span>,
+          check out{" "}
           <a
             className="text-blue-500 underline"
             href="https://www.swatch.com/en_us/internet-time/"
@@ -122,8 +125,8 @@ export default function Home() {
             href="https://twitter.com/cgenco"
           >
             @cgenco
-          </a>
-          .
+          </a>{" "}
+          and I'll add it to this page!
         </P>
       </Shell>
     </div>

@@ -10,6 +10,7 @@ import {
   parseISO,
   addSeconds,
   startOfDay,
+  addMinutes,
 } from "date-fns";
 
 export function localTimezone() {
@@ -55,15 +56,23 @@ export function dateToBeats(date) {
   const beats = (totalSeconds / 86.4).toFixed(2);
 
   return { beats, isoDate: formatISO(bmtDate, { representation: "date" }) };
+}
 
-  // return (
-  //   <pre>
-  //     {JSON.stringify(
-  //       { date, midnight, secs, beats, bmtDate, beats2 },
-  //       null,
-  //       2
-  //     )}
-  //   </pre>
-  // );
-  // return <pre>{JSON.stringify({ zonedDate }, null, 2)}</pre>;
+// https://github.com/InteractionDesignFoundation/add-event-to-calendar-docs/blob/main/services/google.md
+export function gcalLink({
+  title,
+  time,
+  duration = 60,
+  details = "",
+  location = "",
+  zone = "",
+}) {
+  const end = addMinutes(time, duration);
+  const template = "yyyyMMdd'T'HHmmSS";
+  const dates = format(time, template) + "/" + format(end, template);
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+    title
+  )}&dates=${dates}&details=${encodeURIComponent(
+    details
+  )}&location=${location}&ctz=${encodeURIComponent(zone)}`;
 }
