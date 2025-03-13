@@ -18,6 +18,20 @@ export default function Shell({ children, title, onChange }) {
           <div className="bg-white rounded-lg shadow px-5 py-6 sm:px-6">
             {children}
           </div>
+          <a
+            href="https://twitter.com/cgenco?ref_src=twsrc%5Etfw"
+            className="twitter-follow-button mt-2"
+            data-show-count="false"
+            data-size="large"
+            data-show-screen-name="true"
+          >
+            Follow @cgenco
+          </a>
+          <script
+            async
+            src="https://platform.twitter.com/widgets.js"
+            charset="utf-8"
+          ></script>
         </div>
       </main>
     </div>

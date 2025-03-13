@@ -19,11 +19,10 @@ export default function Home() {
   const [now, setNow] = useState(new Date());
 
   useInterval(() => {
-    setNow(new Date());
-
-    // not DRY
-    const { beats } = dateToBeats(now);
-    setTitle(`@${Math.floor(beats)}`);
+    const currentTime = new Date();
+    setNow(currentTime);
+    const { beats } = dateToBeats(currentTime);
+    setTitle(`@${beats}`);
   }, (secondsPerBeat * 1000) / 100);
 
   const { beats, isoDate } = dateToBeats(now);
@@ -100,7 +99,7 @@ export default function Home() {
         <div className="flex justify-around rounded shadow px-4 py-4">
           <input
             value={date}
-            onChange={e => setDate(e.target.value)}
+            onChange={(e) => setDate(e.target.value)}
             type="datetime-local"
           />
           <a
@@ -128,23 +127,21 @@ export default function Home() {
           >
             the Wikipedia page for Swatch Internet Time
           </a>
-          . There's also a podcast about this system that I'm having trouble
-          tracking down. I thought it was by{" "}
+          . There's also a great podcast episode about this system:{" "}
           <a
             className="text-blue-500 underline"
-            href="https://gimletmedia.com/shows/reply-all"
+            href="https://www.wnycstudios.org/podcasts/otm/articles/15-internet-time"
           >
-            Reply All
-          </a>{" "}
-          but I'm not seeing it there. If you find a podcast explaining internet
-          time please lemme know{" "}
+            On The Media #15 - Internet Time
+          </a>
+          . There's also a more pessemistic take at{" "}
           <a
             className="text-blue-500 underline"
-            href="https://twitter.com/cgenco"
+            href="https://youtu.be/D1QMEYVE85o"
           >
-            @cgenco
-          </a>{" "}
-          and I'll add it to this page!
+            Swatch .Beat - The Failure of Internet Time - Bad Ideas #64
+          </a>
+          .
         </P>
       </Shell>
     </div>
