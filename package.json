@@ -28,5 +28,8 @@
     "@fullhuman/postcss-purgecss": "^4.0.3",
     "autoprefixer": "^10.3.1",
     "tailwindcss": "^2.2.7"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
